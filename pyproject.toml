@@ -1,0 +1,15 @@
+[project]
+name = "tutoria-api"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.141.1",
+    "pwdlib[argon2]>=0.3.1",
+    "pyjwt>=2.14.0",
+    "pymysql>=1.2.0",
+    "python-dotenv>=1.2.3",
+    "sqlmodel>=0.0.42",
+    "uvicorn>=0.52.4",
+]
