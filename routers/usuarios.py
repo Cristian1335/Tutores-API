@@ -1,8 +1,10 @@
 from typing import Annotated
 from models.usuarios import UserDB, UserCreate, UserResponse, UserUpdate
 from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlmodel import Session, select
+from sqlmodel import select
 from routers.deps.db_session import SessionDep
+from core.dependencies import get_current_active_user
+from core.security import get_password_hash
 
 not_found_error = HTTPException(status_code=404, detail={"message": "Usuario no encontrado"})
 
@@ -12,9 +14,14 @@ router = APIRouter(
 
 @router.post("/", response_model=UserResponse)
 def crear_usuario(user: UserCreate, session: SessionDep):
+    #verif que no exista ya en la bd 
     verif = session.exec(select(UserDB).where(UserDB.email == user.email)).first()
     if not verif:
-        db_user = UserDB.model_validate(user)
+        hashed_pwd = get_password_hash(user.password)
+        user_dict = user.model_dump(exclude={"password"}) 
+        user_dict["hashed_password"] = hashed_pwd #reemplazo texto plano por pwd hasheada
+        db_user = UserDB(**user_dict) 
+
         session.add(db_user)
         session.commit()
         session.refresh(db_user)
@@ -25,8 +32,11 @@ def crear_usuario(user: UserCreate, session: SessionDep):
 #listo los usuarios
 @router.get("/", response_model=list[UserResponse])
 def get_usuarios(session: SessionDep,
-        offset: int = 0, limit: Annotated[int, Query(le=50)] = 50
+        offset: int = 0, limit: Annotated[int, Query(le=50)] = 50,
+        usuario_actual: UserDB = Depends(get_current_active_user) #dep de seguridad para verif de usuario
 ):
+    # Si el código llega a esta línea, es porque el token es válido y el usuario está activo.
+    # Puedo usar 'usuario_actual' para saber quién hizo la consulta.
     statement = select(UserDB).offset(offset).limit(limit)
     usuarios = session.exec(statement).all()
     return usuarios
