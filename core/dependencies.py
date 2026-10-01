@@ -33,3 +33,20 @@ async def get_current_active_user(current_user: Annotated[UserDB, Depends(get_cu
         raise HTTPException(status_code=400, detail ="Usuario inactivo")
     return current_user
 
+def validate_rol(current_user: UserDB = Depends(get_current_active_user)):
+    roles = ["CONTROL","COORDINADOR","ADMIN","SUPER_USER"]
+    if current_user.rol not in roles:
+        raise HTTPException(
+            status_code= status.HTTP_403_FORBIDDEN,
+            detail="No tiene los permisos necesarios para acceder",
+        )
+    return current_user
+
+def validate_admin_rol(current_user: UserDB = Depends(get_current_active_user)):
+    roles = ["ADMIN","SUPER_USER"] 
+    if current_user.rol not in roles:
+        raise HTTPException(
+            status_code= status.HTTP_403_FORBIDDEN,
+            detail="No tiene los permisos necesarios para acceder"
+        )
+    return current_user

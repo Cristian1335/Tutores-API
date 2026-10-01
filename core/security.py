@@ -1,4 +1,3 @@
-#Acá van las encriptaciones de claves, tokens, y todo lo que tenga que ver con seguridad de la API.
 from dotenv import load_dotenv
 from sqlmodel import Session, select
 from fastapi.security import OAuth2PasswordBearer

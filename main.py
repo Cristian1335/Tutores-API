@@ -7,4 +7,5 @@ create_db_and_tables()
 app = FastAPI()
 app.include_router(usuarios.router)
 app.include_router(auth.router)
+app.include_router(asistencias.router)
 

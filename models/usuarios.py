@@ -2,7 +2,7 @@ from sqlmodel import SQLModel, Field
 from pydantic import EmailStr
 
 class UserBase(SQLModel): #molde para usuarios
-    username: str #Por convenios de OAuth2, debe tener un username el usuario.
+    username: str 
     nombre: str
     apellido: str
     email: EmailStr
@@ -22,6 +22,8 @@ class UserUpdate(SQLModel): #modelo de actualización de usuario
     apellido: str | None = None
     email: EmailStr | None = None
     disabled: bool | None = None
+    password: str | None = None
+    rol: str | None = None
 
 class UserDB(UserBase, table=True): #Tabla de usuarios en la base de datos
     id: int | None = Field(default=None, primary_key=True)
