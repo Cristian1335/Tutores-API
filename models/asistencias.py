@@ -15,6 +15,8 @@ class AsistenciaCreate(AsistenciaBase): #modelo de envío desde el front
 
 class AsistenciaResponse(AsistenciaBase):
     id: int
+    tutor_id: int
+    registrado_por: str | None = None
 
 class AsistenciaDB(AsistenciaBase, table=True): #molde para asist
     id: int | None = Field(default=None, primary_key=True)

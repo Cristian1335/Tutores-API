@@ -1,10 +1,13 @@
 from typing import Annotated
 from models.usuarios import UserDB, UserCreate, UserResponse, UserUpdate
 from fastapi import APIRouter, Depends, HTTPException, Query, status
-from sqlmodel import select
+from sqlmodel import select, func
 from routers.deps.db_session import SessionDep
 from core.dependencies import get_current_active_user, validate_admin_rol, validate_rol
 from core.security import get_password_hash
+
+from models.asistencias import AsistenciaDB
+from services.asistencia_services import contador_inasistencias, total_asistencias
 
 not_found_error = HTTPException(status_code= status.HTTP_404_NOT_FOUND, detail={"message": "Usuario no encontrado"})
 
@@ -52,7 +55,7 @@ def get_me(session: SessionDep,
         "apellido": usuario_actual.apellido,
         "rol": usuario_actual.rol
     }
-    inasistencias = 0 #falta realizar el calculo
+    inasistencias = contador_inasistencias(session, usuario_actual.id)
     tareas_asignadas =[] #lista de tareas. Falta implementar
     respuesta = {
         "user": info,
