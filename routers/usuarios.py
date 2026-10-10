@@ -1,13 +1,14 @@
+from datetime import date
 from typing import Annotated
 from models.usuarios import UserDB, UserCreate, UserResponse, UserUpdate
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlmodel import select, func
 from routers.deps.db_session import SessionDep
-from core.dependencies import get_current_active_user, validate_admin_rol, validate_rol
+from core.dependencies import get_current_active_user, validate_admin_rol
 from core.security import get_password_hash
 
-from models.asistencias import AsistenciaDB
-from services.asistencia_services import contador_inasistencias, total_asistencias
+from services.asistencia_services import contador_inasistencias
+from services.tarea_services import get_tareas
 
 not_found_error = HTTPException(status_code= status.HTTP_404_NOT_FOUND, detail={"message": "Usuario no encontrado"})
 
@@ -45,7 +46,12 @@ def get_usuarios(session: SessionDep,
 
 @router.get("/me", response_model=dict)
 def get_me(session: SessionDep, 
-           usuario_actual: Annotated[UserDB,Depends(get_current_active_user)]
+           usuario_actual: Annotated[UserDB,Depends(get_current_active_user)],
+           skip: int = 0, 
+           limit: int = 50,
+           estado: str | None = None,
+           fecha: date | None = None,
+           nombre_tarea: str | None = None
 ):
     """ Devuelve la informacion personal, username, email y estadisticas"""
     info = {
@@ -56,7 +62,15 @@ def get_me(session: SessionDep,
         "rol": usuario_actual.rol
     }
     inasistencias = contador_inasistencias(session, usuario_actual.id)
-    tareas_asignadas =[] #lista de tareas. Falta implementar
+    tareas_asignadas = get_tareas(
+        session, 
+        user_id = usuario_actual.id,
+        skip = skip,
+        limit = limit,
+        nombre_tarea = nombre_tarea,
+        fecha = fecha,
+        estado = estado
+    )
     respuesta = {
         "user": info,
         "estadisticas":{
@@ -106,9 +120,9 @@ def actualizar_usuario(user: UserUpdate, user_id:int, session: SessionDep, usuar
         return usuario
     else:
         raise HTTPException(
-                    status_code = status.HTTP_403_FORBIDDEN,
-                    detail= "No tiene permisos para realizar esta accion"
-                )
+                status_code = status.HTTP_403_FORBIDDEN,
+                detail= "No tiene permisos para realizar esta accion"
+            )
 
 @router.patch("/baja/{user_id}") #Soft delete - Baja de usuario desactivandolo
 def delete_usuario(
