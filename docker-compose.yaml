@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  db:
+    image: mysql:8.0
+    container_name: tutoria_mysql
+    restart: always
+    environment:
+      # Docker va a crear esta base de datos y usuario automáticamente al arrancar
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: tutoria_db
+      MYSQL_USER: api_user
+      MYSQL_PASSWORD: api_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+volumes:
+  mysql_data:
