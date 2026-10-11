@@ -1,6 +1,6 @@
 # Tutoría API 🎓
 
-API RESTful robusta construida con **FastAPI**, **SQLModel**, **JWT** y **OAUTH2** para la gestión integral de un area de trabajo grupal. Diseñada para administrar usuarios, controlar el presentismo (asistencias) y coordinar un sistema de tareas colaborativo con filtrado dinámico.
+API RESTful robusta construida con **FastAPI**, **SQLModel**, **JWT** y **OAuth2** para la gestión integral de un área de trabajo grupal. Diseñada para administrar usuarios, controlar el presentismo (asistencias), registrar consultas, coordinar un sistema de tareas colaborativo con filtrado dinámico y generar análisis de eficiencia mediante Inteligencia Artificial.
 
 ## 🚀 Tecnologías Principales
 
@@ -9,6 +9,7 @@ API RESTful robusta construida con **FastAPI**, **SQLModel**, **JWT** y **OAUTH2
 *   **Base de Datos:** MySQL (con soporte para migraciones / esquemas relacionales)
 *   **Servidor ASGI:** Uvicorn
 *   **Seguridad:** Hashing de contraseñas y validación de roles basada en dependencias (Dependency Injection).
+*   **Inteligencia Artificial:** SDK google-genai (modelo Gemini Flash 3.8).
 
 ## 🏗️ Arquitectura del Proyecto
 
@@ -27,16 +28,20 @@ El proyecto sigue un patrón de diseño estructurado en capas para separar las r
 *   Mutación segura de datos: Intercepción y hasheo automático de contraseñas en operaciones `PATCH` mediante Argon2.
 *   Prevención de escalada de privilegios (restricción de modificación de roles).
 
-### 2. Control de Asistencias
-*   Registro y seguimiento del presentismo del equipo de trabajo.
-*   Endpoints dedicados para el conteo de inasistencias.
-*   Integración directa de métricas en el perfil del usuario (`/me`).
+### 2. Control de Asistencias y Consultas
+*   **Asistencias:** Registro y seguimiento del presentismo del equipo de trabajo. Endpoints dedicados para el conteo de inasistencias e integración directa de métricas en el perfil del usuario (`/me`).
+*   **Consultas:** Registro individualizado de atenciones a alumnos, con separación lógica de base de datos para garantizar métricas operativas exactas.
 
 ### 3. Sistema de Tareas (Gestión Colaborativa)
 *   CRUD completo para la asignación y seguimiento de tareas institucionales.
 *   Relación de base de datos (Claves Foráneas) entre `UserDB` y `Tarea`.
 *   **Filtrado Dinámico:** Búsqueda y filtrado de tareas por estado, fecha y coincidencias parciales de nombre mediante queries construidas condicionalmente (`icontains`).
 *   Paginación nativa (`skip`, `limit`) delegada a la capa de servicios.
+
+### 4. Análisis y Estadísticas con IA
+*   Endpoint de agregación de datos (`GROUP BY`) para evaluar el volumen histórico de consultas.
+*   Integración directa con **Gemini Flash 3.8** para analizar picos y caídas de demanda.
+*   Generación de recomendaciones operativas automáticas para optimizar la asignación de horarios y recursos humanos.
 
 ## 💻 Instalación y Ejecución Local
 
@@ -59,6 +64,7 @@ Este proyecto utiliza `uv` como gestor de paquetes y dependencias ultra-rápido,
         DB_PORT = puerto
         SECRET_KEY="tu_clave_secreta_para_jwt"
         ALGORITHM="algoritmo usado para jwt"
+        API_KEY = "tu_api_key"
 
 3. Instalar las dependencias:
     # uv creará automáticamente el entorno virtual (.venv) e instalará todo lo declarado en pyproject.toml
@@ -77,6 +83,6 @@ Este proyecto utiliza `uv` como gestor de paquetes y dependencias ultra-rápido,
 
 **Próximos Pasos (Roadmap)**
 
-  [ ] Módulo de Estadísticas: Creación de endpoints de agregación de datos para la generación de gráficos de carga de trabajo.
+  [ X ] Módulo de Estadísticas: Creación de endpoints de agregación de datos para la generación de gráficos de carga de trabajo.
   
-  [ ] Integración con IA: Implementación de análisis predictivo sobre los picos de consultas y tareas utilizando Modelos de Lenguaje Grandes (LLMs) para la toma de decisiones en la asignación de tutores.
+  [ X ] Integración con IA: Implementación de análisis predictivo sobre los picos de consultas y tareas utilizando Modelos de Lenguaje Grandes (LLMs) para la toma de decisiones en la asignación de tutores.
