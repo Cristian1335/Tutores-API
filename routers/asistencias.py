@@ -78,4 +78,5 @@ def get_particular(session: SessionDep,
         "registros:": registros}
     return mensaje
     
-
+#Parece ser que el crear una tabla de consultas no afecta para nada a este endpoint, ya que no se hace ninguna relación con la tabla de consultas. Por lo tanto, no es necesario modificar este endpoint para que funcione con la nueva tabla de consultas.
+#Corroborar...

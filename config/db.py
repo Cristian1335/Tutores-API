@@ -15,6 +15,7 @@ url_connection = f'mysql+pymysql://{user}:{password}@{host}:{db_port}/{db_name}'
 engine = create_engine(url_connection)
 
 def create_db_and_tables():
+    
     SQLModel.metadata.create_all(engine)
 
 def get_session():

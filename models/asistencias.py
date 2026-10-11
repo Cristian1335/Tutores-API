@@ -6,9 +6,6 @@ class AsistenciaBase(SQLModel):
     asistencia: str = Field(default="PRESENTE") #por defecto la asistencia es "PRESENTE"
     evento: bool = Field(default=False)
 
-    alumno: str | None = None
-    legajo: int | None = None 
-    tema: str | None = None
 
 class AsistenciaCreate(AsistenciaBase): #modelo de envío desde el front
     tutor_id: int #id del tutor al que se le registra la asistencia

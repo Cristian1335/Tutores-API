@@ -30,7 +30,7 @@ def crear_usuario(user: UserCreate, session: SessionDep, admin: Annotated[UserDB
         session.refresh(db_user)
         return db_user
     else: 
-        raise HTTPException(status_code=400, detail={"message": "El usuario existente, inicie sesion"})
+        raise HTTPException(status_code=400, detail={"message": "Usuario existente, inicie sesion"})
 
 #listo los usuarios
 @router.get("/", response_model=list[UserResponse])
@@ -137,6 +137,8 @@ def delete_usuario(
     session.add(user)
     session.commit()
     return {"message":"Tutor dado de baja exitosamente"}
+
+
 
 
 
